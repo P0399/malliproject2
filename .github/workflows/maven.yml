@@ -1,0 +1,46 @@
+name: Java and Docker CI/CD
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+
+    - name: Set up JDK 11
+      uses: actions/setup-java@v2
+      with:
+        distribution: 'adopt'
+        java-version: '11'
+
+    - name: Build with Maven
+      run: mvn clean package
+
+    - name: Build Docker Image
+      run: |
+        docker build -t testimage:latest .
+        docker tag testimage:latest pradeepreddyvangala/malliproject:latest
+        docker rmi testimage:latest
+        docker run -itd --name sample-container pradeepreddyvangala/malliproject:latest
+        docker ps
+
+    - name: Log in to Docker Hub
+      run: docker login -u pradeepreddyvangala -p Vpr@d99p123
+
+    - name: Push Docker Image
+      run: docker push pradeepreddyvangala/malliproject:latest
+
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clean workspace
+        run: git clean -ffdx && git reset --hard
+
+
