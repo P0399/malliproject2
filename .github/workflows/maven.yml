@@ -41,6 +41,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Clean workspace
-        run: git clean -ffdx && git reset --hard
+        run: |
+          git clean -ffdx && git reset --hard
 
 
